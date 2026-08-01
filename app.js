@@ -6,7 +6,15 @@ const STROKE_WEIGHT = 0.5;
 let inputImg, inputCanvas, modelCanvas, output, statusMsg;
 let pix2pix, transferBtn, clearBtn, modelFileInput, imageFileInput;
 let isDrawing = false;
+let drewThisStroke = false;
+let firstSketchDone = false;
 let currentModelUrl = null;
+let modelReady = false;
+let modelLoadTimeoutId = null;
+
+// Step 1: point this at the model file that should live inside the site.
+// Put your .pict file in the model/ folder and keep the same relative path here.
+const BUNDLED_MODEL_PATH = 'model/your-model.pict';
 
 // ── Floyd-Steinberg dither (color) ───────────────────────────────────────────
 function ditherFloydSteinbergColor(pg) {
@@ -88,10 +96,10 @@ function setup() {
   clearBtn.mousePressed(clearCanvas);
 
   modelFileInput = select('#modelFileInput');
-  modelFileInput.elt.addEventListener('change', handleModelFile);
+  if (modelFileInput) modelFileInput.elt.addEventListener('change', handleModelFile);
 
   imageFileInput = select('#imageFileInput');
-  imageFileInput.elt.addEventListener('change', handleImageFile);
+  if (imageFileInput) imageFileInput.elt.addEventListener('change', handleImageFile);
 
   stroke(255);
   strokeWeight(STROKE_WEIGHT);
@@ -105,13 +113,18 @@ function setup() {
 
   transferBtn.mousePressed(transfer);
 
-  // No model is loaded until the user uploads a .pict file.
+  // Step 2: try to load a bundled model automatically when the page opens.
   transferBtn.attribute('disabled', '');
+  loadBundledModel();
 }
 
 function draw() {
   if (mouseIsPressed) {
     isDrawing = true;
+    // only count strokes that happen over the canvas
+    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+      drewThisStroke = true;
+    }
     stroke(255);
     strokeWeight(STROKE_WEIGHT);
     noFill();
@@ -130,6 +143,54 @@ function draw() {
   );
 }
 
+function mouseReleased() {
+  // First time the user finishes drawing something on the canvas,
+  // highlight the generate button so they know what to do next.
+  if (drewThisStroke && !firstSketchDone) {
+    firstSketchDone = true;
+    if (transferBtn && transferBtn.elt) {
+      transferBtn.elt.classList.add('nudge');
+      // remove the animation after it plays a few times so it isn't forever
+      setTimeout(() => {
+        if (transferBtn && transferBtn.elt) {
+          transferBtn.elt.classList.remove('nudge');
+        }
+      }, 6000);
+    }
+  }
+  drewThisStroke = false;
+}
+
+function beginModelLoad(message) {
+  clearTimeout(modelLoadTimeoutId);
+  modelReady = false;
+  transferBtn.attribute('disabled', '');
+  statusMsg.html(message);
+
+  modelLoadTimeoutId = setTimeout(() => {
+    if (!modelReady) {
+      statusMsg.html('');
+    }
+  }, 8000);
+}
+
+function loadBundledModel() {
+  // ml5 comes from a CDN; if it didn't load, say so clearly instead of hanging.
+  if (typeof ml5 === 'undefined') {
+    statusMsg.html('Could not reach the ml5 library. Check your internet connection and reload.');
+    return;
+  }
+
+  beginModelLoad('');
+
+  if (currentModelUrl) {
+    URL.revokeObjectURL(currentModelUrl);
+    currentModelUrl = null;
+  }
+
+  pix2pix = ml5.pix2pix(BUNDLED_MODEL_PATH, modelLoaded);
+}
+
 function handleModelFile(evt) {
   const file = evt.target.files && evt.target.files[0];
   if (!file) return;
@@ -140,8 +201,7 @@ function handleModelFile(evt) {
     currentModelUrl = null;
   }
 
-  transferBtn.attribute('disabled', '');
-  statusMsg.html('Loading model... Please wait...');
+  beginModelLoad('Loading model... Please wait...');
 
   currentModelUrl = URL.createObjectURL(file);
   pix2pix = ml5.pix2pix(currentModelUrl, modelLoaded);
@@ -165,20 +225,22 @@ function handleImageFile(evt) {
 }
 
 function modelLoaded() {
+  clearTimeout(modelLoadTimeoutId);
+  modelReady = true;
   statusMsg.html('Model Loaded!');
   transferBtn.elt.removeAttribute('disabled');
 }
 
 function clearCanvas() {
-  statusMsg.html(pix2pix ? 'Model Loaded!' : 'Upload a .pict model file to begin.');
+  statusMsg.html(modelReady ? 'Model loaded — draw a leaf and hit Transfer.' : 'Loading the model…');
   background(0);
   output.elt.src = '';
   output.elt.alt = 'The AI-generated output will appear here after clicking Transfer.';
 }
 
 function transfer() {
-  if (!pix2pix) {
-    statusMsg.html('Please upload a .pict model file first.');
+  if (!pix2pix || !modelReady) {
+    statusMsg.html('The model is not ready yet — give it a moment to load.');
     return;
   }
 
