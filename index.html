@@ -19,20 +19,17 @@
 
 <body>
   <main>
-    <p>This html demo of pix2pix is slightly modified from Dongphil Yoo's <a href="https://github.com/dongphilyoo/pix2pix-ml5-demo">pix2pix-ml5-demo</a></p>
-    <p id="status" role="status" aria-live="polite">Upload a .pict model file to begin.</p>
+    <p id="status" role="status" aria-live="polite">Loading a bundled model from the site folder...</p>
 
     <div id="uploads" role="group" aria-label="File uploads">
       <label for="modelFileInput">
-        Model file (.pict):
+        Model file (.pict) fallback:
         <input type="file" id="modelFileInput" accept=".pict" aria-describedby="status">
       </label>
       <label for="imageFileInput">
         Input image (optional):
         <input type="file" id="imageFileInput" accept="image/*">
       </label>
-    </div>
-
     <div id="app">
       <div id="input"
            role="img"
@@ -47,6 +44,10 @@
     <div id="buttons" role="group" aria-label="Canvas controls">
       <button id="clearBtn" aria-label="Clear the canvas and start over">Clear</button>
       <button id="transferBtn" aria-label="Run the pix2pix model and generate an image from your drawing" disabled>Transfer</button>
+    </div>
+    <br>
+    <br>
+        <p>This html demo of pix2pix is slightly modified from Dongphil Yoo's <a href="https://github.com/dongphilyoo/pix2pix-ml5-demo">pix2pix-ml5-demo</a></p>
     </div>
   </main>
 
