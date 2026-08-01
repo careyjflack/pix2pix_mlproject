@@ -493,3 +493,45 @@ canvas {
         box-shadow: 0 0 18px 5px rgba(184, 230, 120, .7);
     }
 }
+
+/* ── learning progression ───────────────────── */
+.progression { margin: 28px 0 0; }
+.prog-phase { margin: 0 0 32px; }
+.prog-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #eef2c8;
+    margin: 0 0 10px;
+}
+.prog-label em { font-style: italic; text-transform: none; letter-spacing: 0; }
+.prog-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.prog-item {
+    flex: 1 1 0;
+    max-width: 200px;
+    text-align: center;
+}
+.prog-item img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #000;
+    display: block;
+}
+.prog-item:nth-child(3) img { background: #f3f0e6; }
+.prog-item em {
+    display: block;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-style: normal;
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #eef2c8;
+    opacity: .8;
+    margin-top: 7px;
+}

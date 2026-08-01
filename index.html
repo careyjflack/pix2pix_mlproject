@@ -88,8 +88,9 @@
           This experiment started as an assignment in my Handmade Datasets class
           with <a href="https://handmadedatasets.com/" target="_blank" rel="noopener">SFPC</a>,
           where the whole idea is to build your own data by hand instead of using
-          someone else's — a way to really understand how data flows through a
-          machine learning model. It was laborious, constrained, and fun.
+          someone else's. It's true that when you can hold the data yourself, you
+          can better understand how it flows through a machine learning model.
+          Doing this was laborious, constrained, and fun.
         </p>
       </div>
 
@@ -107,9 +108,10 @@
           <p>
             Picking your dataset is the most important part of a project like
             this — good data creates good results. It's also easy to pick
-            something with too many variables, making it impossible for a model to
-            learn quickly. I chose to keep it simple: 300 leaves from one shrub
-            type, taught to a small pix2pix model.
+            something with too many visual differences between examples, which
+            will quickly turn a small project like this into a
+            <em>certified dummy mission™</em>. I chose to keep it simple: 300
+            leaves from one shrub type, taught to a small pix2pix model.
           </p>
           <p>
             I'm a hobby ecologist, so I'm naturally drawn to the small. For this
@@ -135,14 +137,19 @@
             <img src="photos/book_pressed.jpg" alt="Leaves pressed flat between the pages of a large book." loading="lazy">
             <figcaption>the vine · a bag of it · leaves on the glass · pressed flat in whatever book was heavy</figcaption>
           </figure>
-          <p>
+          <p style="margin-top: 40px;">
             While working away, I reflected on the same lesson generative AI
-            keeps teaching me: we obsess over the outputs and forget the inputs —
-            the unglamorous structure it takes to make something beautiful, whether
-            it's a leaf or a generated image. I think there's something important
-            to learn from the things we deem small, uninteresting. I also realized
-            the outputs aren't the only intelligent thing — so are the inputs.
-            Nature sure is intelligent.
+            keeps teaching me: we obsess over the outputs while forgetting the
+            inputs — the unglamorous structure it takes to make something
+            beautiful, whether it's a leaf's vein network or a generated image.
+            When we forget the inputs, we forget the intelligence we started with
+            in the first place. In this case, I was examining
+            <em>nature's intelligence</em> — its ability to keep generating
+            itself, over and over, in the perfect way, for a greater good.
+          </p>
+          <p>
+            I think there's something important to learn from the things we deem
+            small, uninteresting.
           </p>
         </div>
 
@@ -159,19 +166,20 @@
             <img src="photos/preview_crop.jpg" alt="A laptop screen showing leaves being cropped one by one in the Preview app." loading="lazy">
             <figcaption>a batch of the collection · cropping every single one, by hand</figcaption>
           </figure>
-          <p>
-            Then came the decisions that actually shape the model — and where I
-            learned the most. <b>Epochs:</b> one full pass over all the data is one
-            epoch; I set a max of 200. <b>Learning rate:</b> how big a step the
-            model takes each time it corrects itself — too high and it overshoots
-            and never settles, too low and it barely learns. I used 0.0001, the
-            standard pix2pix default, because a small single-subject dataset like
-            mine destabilizes easily, and a gentle rate keeps training steady.
-            <b>Save frequency (100):</b> saves the model itself — checkpoints, the
+          <p style="margin-top: 40px;">
+            Then came the decisions that actually shape the model. <b>Epochs:</b>
+            one full pass over all the data is one epoch — I set a max of 200,
+            the established standard for pix2pix. <b>Learning rate:</b> how big a
+            step the model takes each time it corrects itself. Too high and it
+            overshoots and crashes; too low and it's making painfully slow
+            progress (akin to watching a plant sprout for hundreds of hours
+            straight). I used 0.0001 — cautious, maybe overcautious.
+            <b>Save frequency (100):</b> saves the model itself — checkpoints,
             trained weights you can load and use later. <b>Display frequency
-            (500):</b> saves preview images every 500 steps — the input / guess /
-            target triplets — so you can literally watch it learning (this was my
-            favorite part!).
+            (500):</b> saves preview images every 500 steps — the input, the
+            guess, the target — so you can literally watch it learning (this was
+            my favorite part!). I did undertrain it a bit in the end. You live,
+            you learn, you train again.
           </p>
           <figure class="photo-single">
             <img src="train/config.png" alt="A terminal showing the pix2pix training command with flags: mode train, which_direction AtoB, max_epochs 200, lr 0.0001, save_freq 100, display_freq 500." loading="lazy">
@@ -186,33 +194,41 @@
             <img src="train/loss_log.png" alt="Training log output showing epoch 82, discriminator loss around 0.8, generator GAN loss around 1.7, and L1 loss around 0.16, saving model at intervals." loading="lazy">
             <figcaption>epoch 82, still going — the losses in their tug-of-war</figcaption>
           </figure>
+
+          <figure class="triplet" style="margin-top:32px;">
+            <span class="pair-item">
+              <img src="train/cp1_outputs.png" alt="Model output at checkpoint 99 — blurry green shape." loading="lazy">
+              <em>checkpoint 99</em>
+            </span>
+            <span class="pair-item">
+              <img src="train/cp2_outputs.png" alt="Model output at checkpoint 1900 — shape and color emerging." loading="lazy" style="background:#fff;">
+              <em>checkpoint 1,900</em>
+            </span>
+            <span class="pair-item">
+              <img src="train/cp3_outputs.png" alt="Model output at checkpoint 43200 — veins beginning to show." loading="lazy" style="background:#fff;">
+              <em>checkpoint 43,200</em>
+            </span>
+          </figure>
         </div>
 
         <div class="note" id="results">
           <p class="note-h">It kind of looks like shit. Here's what I see anyway.</p>
           <p>
-            The honest middle: the outline it was given, the leaf it
-            <em>generated</em>, and the real one it reached for. Smeary, dithered,
-            a little haunted looking (why is AI so uncanny?!)... but look closer:
-            it learned green in the middle, pale at the vein, darker at the edge.
-            It started trying to figure out veins, chaotically. But now a blank
-            network has a small opinion about leaves.
+            Ok, let's look at this thing. Smeary, dithered, a little haunted
+            looking (why is AI so uncanny?!) — but look closer: it learned green
+            in the middle, pale at the vein, darker at the edge. It started
+            trying to figure out veins, chaotically. A blank network now has
+            opinions.
           </p>
           <p>
-            The model came away with a small opinion about leaves. I came away
-            understanding what it actually takes to build one that can — the cost
-            of a dataset, the demands of a model, and the complexity of even the
-            smallest things. I'm excited to keep iterating.
+            And I came away understanding what it actually takes to build one —
+            the cost of a dataset, the demands of a model, and the complexity of
+            even the smallest things. I'm excited to keep iterating.
           </p>
           <figure class="triplet">
-            <span class="pair-item"><img src="train/t1_input.png" alt="Input outline." loading="lazy"><em>input</em></span>
-            <span class="pair-item"><img src="train/t1_target.png" alt="The real target leaf." loading="lazy"><em>real leaf</em></span>
-            <span class="pair-item"><img src="train/t1_output.png" alt="What the model generated." loading="lazy"><em>it guessed</em></span>
-          </figure>
-          <figure class="triplet">
-            <span class="pair-item"><img src="train/t2_input.png" alt="Input outline." loading="lazy"><em>input</em></span>
-            <span class="pair-item"><img src="train/t2_target.png" alt="The real target leaf." loading="lazy"><em>real leaf</em></span>
-            <span class="pair-item"><img src="train/t2_output.png" alt="What the model generated." loading="lazy"><em>it guessed</em></span>
+            <span class="pair-item"><img src="train/cp3_inputs.png" alt="Input outline." loading="lazy"><em>input</em></span>
+            <span class="pair-item"><img src="train/cp3_targets.png" alt="The real target leaf." loading="lazy" style="background:#f3f0e6;"><em>real leaf</em></span>
+            <span class="pair-item"><img src="train/cp3_outputs.png" alt="What the model generated." loading="lazy" style="background:#fff;"><em>it guessed</em></span>
           </figure>
         </div>
 
@@ -222,18 +238,20 @@
             That was the real question. Veins are unseen, we don't think about
             them, but they hold up the whole leaf, and the leaf holds up the
             ecosystem, and the air we breathe. It felt like a fitting thing to ask
-            a model to learn: the intimate, structural, easy-to-overlook parts.
-            It reminds me of the overlooked dataset driving the models we love to
-            use. Watching it train,
-            checkpoint by checkpoint, a hundred images at a time, I understood ML
-            differently. The output isn't the point. The inputs are — the data,
-            the pipeline, the thousand small decisions. That labor is the real
-            star here; whether you're building these models, or maintaining them,
-            they're made by many hands.
+            a model to learn: the intimate, structural, easy-to-overlook parts. It
+            reminds me of the overlooked dataset driving the models we love to use.
           </p>
           <p>
-            What artists have been saying for so long is true: the purpose is the
-            process, and the labor is the art.
+            Watching it train, checkpoint by checkpoint, a hundred images at a
+            time, I understood ML differently. The output isn't the point. The
+            inputs are — the data, the pipeline, the thousands of small decisions.
+            The labor is the real star here; whether you're building these
+            datasets, the models that use them, or maintaining them, they're made
+            by many, many hands.
+          </p>
+          <p>
+            What artists have been saying for so long is true: <em>the purpose is
+            the process, and the labor is the art.</em>
           </p>
           <p>
             So maybe it hasn't quite imagined new veins yet — or answered the
